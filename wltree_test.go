@@ -28,20 +28,29 @@ func TestWltree(t *testing.T) {
 		for _, ws := range weights {
 			bs := random(size, ws)
 			wt := NewBytes(bs)
+			wti := NewIntKeys(byteSlice(bs))
 
 			var counts [256]int
 			for i := 0; i <= len(bs) && fails < 30; i++ {
 				for c := 0; c < 256; c++ {
 					c := byte(c)
 					if got, want := wt.Rank(c, i), counts[c]; got != want {
-						t.Errorf("%q.Rank(%v, %v) => got %v, want %v", bs, string(c), i, got, want)
+						t.Errorf("Bytes: %q.Rank(%v, %v) => got %v, want %v", bs, string(c), i, got, want)
+						fails++
+					}
+					if got, want := wti.Rank(int(c), i), counts[c]; got != want {
+						t.Errorf("IntKeys: %q.Rank(%v, %v) => got %v, want %v", bs, string(c), i, got, want)
 						fails++
 					}
 				}
 				if i != len(bs) {
 					c := bs[i]
 					if got, want := wt.Select(c, counts[c]), i; got != want {
-						t.Errorf("%q.Select(%v, %v) => got %v, want %v", bs, string(c), counts[c], got, want)
+						t.Errorf("Bytes: %q.Select(%v, %v) => got %v, want %v", bs, string(c), counts[c], got, want)
+						fails++
+					}
+					if got, want := wti.Select(int(c), counts[c]), i; got != want {
+						t.Errorf("IntKeys: %q.Select(%v, %v) => got %v, want %v", bs, string(c), counts[c], got, want)
 						fails++
 					}
 					counts[bs[i]]++
