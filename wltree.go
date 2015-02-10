@@ -5,7 +5,7 @@ See http://en.wikipedia.org/wiki/Wavelet_Tree for details.
 Example
 
     const s = "abracadabra"
-    wt := wltree.New(s)
+    wt := wltree.NewBytes(s)
     // The number of 'a' in s.
     wt.Rank('a', len(s)) //=> 5
     // The number of 'a' in s[3:8] = "acada"
@@ -22,15 +22,15 @@ import (
 	"github.com/mozu0/huffman"
 )
 
-// Wltree represents a Wavelet Tree.
-type Wltree struct {
+// Bytes represents a Wavelet Tree on bytestring.
+type Bytes struct {
 	nodes [256][]*bitvector.BitVector
 	codes [256]string
 }
 
-// New makes a Wavelet Tree from s.
-func New(s []byte) *Wltree {
-	w := &Wltree{}
+// NewBytes makes a Wavelet Tree from bytestring s.
+func NewBytes(s []byte) *Bytes {
+	w := &Bytes{}
 
 	// Generate huffman tree based on character occurrences in s.
 	charset, counts := freq(s)
@@ -88,7 +88,7 @@ func New(s []byte) *Wltree {
 }
 
 // Rank returns the count of the character c in s[0:i].
-func (w *Wltree) Rank(c byte, i int) int {
+func (w *Bytes) Rank(c byte, i int) int {
 	code := w.codes[c]
 	if code == "" {
 		return 0
@@ -107,7 +107,7 @@ func (w *Wltree) Rank(c byte, i int) int {
 
 // Select returns i such that Rank(c, i) = r, i.e. it returns the index of r-th occurrence of the
 // character c.
-func (w *Wltree) Select(c byte, r int) int {
+func (w *Bytes) Select(c byte, r int) int {
 	code := w.codes[c]
 	if code == "" {
 		panic(fmt.Sprintf("wltree: no such character '%v' in s.", c))

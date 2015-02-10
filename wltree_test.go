@@ -27,7 +27,7 @@ func TestWltree(t *testing.T) {
 	for size := 0; size < maxSize; size++ {
 		for _, ws := range weights {
 			bs := random(size, ws)
-			wt := New(bs)
+			wt := NewBytes(bs)
 
 			var counts [256]int
 			for i := 0; i <= len(bs) && fails < 30; i++ {
