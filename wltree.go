@@ -28,46 +28,45 @@ func New(s []byte) *Wltree {
 	// Count number of bits in each node of the wavelet tree.
 	sizes := make(map[string]int)
 	for i := range charset {
-		var (
-			code  = codes[i]
-			count = counts[i]
-		)
-		for j := 0; j < len(code)-1; j++ {
+		code := codes[i]
+		count := counts[i]
+		for j := range code {
 			sizes[code[:j]] += count
 		}
 	}
 
 	// Assign BitVector Builders to each wavelet tree node.
-	nodes := make(map[string]*node)
+	builders := make(map[string]*bitvector.Builder)
+	var keys []string
 	for key, size := range sizes {
-		nodes[key] = &node{
-			builder: bitvector.NewBuilder(size),
-		}
+		keys = append(keys, key)
+		builders[key] = bitvector.NewBuilder(size)
 	}
 
-	// Flip bits in each BitVector Builder in each wavelet tree node.
+	// Set bits in each BitVector Builder.
+	index := make(map[string]int)
 	for _, c := range s {
 		code := w.codes[c]
-		for j := 0; j < len(code)-1; j++ {
-			n := nodes[code[:j]]
+		for j := range code {
 			if code[j] == '1' {
-				n.builder.Set(n.index)
+				builders[code[:j]].Set(index[code[:j]])
 			}
-			n.index++
+			index[code[:j]]++
 		}
 	}
 
 	// Build all BitVectors.
-	for key := range nodes {
-		nodes[key].bv = nodes[key].builder.Build()
+	bvs := make(map[string]*bitvector.BitVector)
+	for key, builder := range builders {
+		bvs[key] = builder.Build()
 	}
 
 	// For each charactor, register the path from wavelet tree root, through wavelet tree nodes, and
 	// to the leaf.
 	for i, c := range charset {
 		code := codes[i]
-		for j := 0; j < len(code)-1; j++ {
-			w.nodes[c] = append(w.nodes[c], nodes[code[:j]].bv)
+		for j := range code {
+			w.nodes[c] = append(w.nodes[c], bvs[code[:j]])
 		}
 	}
 
@@ -109,12 +108,6 @@ func (w *Wltree) Select(c byte, r int) int {
 		}
 	}
 	return r
-}
-
-type node struct {
-	builder *bitvector.Builder
-	bv      *bitvector.BitVector
-	index   int
 }
 
 func freq(s []byte) (charset []byte, counts []int) {
