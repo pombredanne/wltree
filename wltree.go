@@ -6,9 +6,12 @@ Example
 
     const s = "abracadabra"
     wt := wltree.New(s)
-    wt.Rank('a', len(s)) //=> 5 (The number of 'a' in s.)
-    wt.Rank('a', 8) - wt.Rank('a', 3) //=> 3 (The number of 'a' in s[3:8] = "acada") 
-    wt.Select('a', 2 /* 0-origin, thus means 3rd */) //=> 5 (The index of the 3rd occurrence of 'a' in s)
+    // The number of 'a' in s.
+    wt.Rank('a', len(s)) //=> 5
+    // The number of 'a' in s[3:8] = "acada"
+    wt.Rank('a', 8) - wt.Rank('a', 3) //=> 3
+    // The index of the 3rd occurrence of 'a' in s. 0-origin, thus 2 means 3rd.
+    wt.Select('a', 2) //=> 5
 */
 package wltree
 
