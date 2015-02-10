@@ -4,7 +4,7 @@ See http://en.wikipedia.org/wiki/Wavelet_Tree for details.
 
 Example
 
-    const s = "abracadabra"
+    s := []byte("abracadabra")
     wt := wltree.NewBytes(s)
     // The number of 'a' in s.
     wt.Rank('a', len(s)) //=> 5
@@ -105,8 +105,9 @@ func (w *Bytes) Rank(c byte, i int) int {
 	return i
 }
 
-// Select returns i such that Rank(c, i) = r, i.e. it returns the index of r-th occurrence of the
-// character c.
+// Select returns i such that Rank(c, i) = r.
+// i.e. it returns the index of r-th occurrence of the character c.
+// Note that r is 0-origined, so wt.Select('a', 2) returns the index of the third 'a'.
 func (w *Bytes) Select(c byte, r int) int {
 	code := w.codes[c]
 	if code == "" {
