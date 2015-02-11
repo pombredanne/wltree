@@ -28,7 +28,7 @@ func TestWltree(t *testing.T) {
 		for _, ws := range weights {
 			bs := random(size, ws)
 			wt := NewBytes(bs)
-			wti := NewIntKeys(byteSlice(bs))
+			wti := NewInt64Keys(byteSlice(bs))
 
 			var counts [256]int
 			for i := 0; i <= len(bs) && fails < 30; i++ {
@@ -38,7 +38,7 @@ func TestWltree(t *testing.T) {
 						t.Errorf("Bytes: %q.Rank(%v, %v) => got %v, want %v", bs, string(c), i, got, want)
 						fails++
 					}
-					if got, want := wti.Rank(int(c), i), counts[c]; got != want {
+					if got, want := wti.Rank(int64(c), i), counts[c]; got != want {
 						t.Errorf("IntKeys: %q.Rank(%v, %v) => got %v, want %v", bs, string(c), i, got, want)
 						fails++
 					}
@@ -49,7 +49,7 @@ func TestWltree(t *testing.T) {
 						t.Errorf("Bytes: %q.Select(%v, %v) => got %v, want %v", bs, string(c), counts[c], got, want)
 						fails++
 					}
-					if got, want := wti.Select(int(c), counts[c]), i; got != want {
+					if got, want := wti.Select(int64(c), counts[c]), i; got != want {
 						t.Errorf("IntKeys: %q.Select(%v, %v) => got %v, want %v", bs, string(c), counts[c], got, want)
 						fails++
 					}

@@ -28,20 +28,20 @@ type Interface interface {
 	// Len returns the length of the arraylike.
 	Len() int
 	// Key returns the integer key of the i-th element.
-	Key(i int) int
+	Key(i int) int64
 }
 
-// IntKeys represents a Wavelet Tree on int keys.
-type IntKeys struct {
-	nodes map[int][]*bitvector.BitVector
-	codes map[int]string
+// Int64Keys represents a Wavelet Tree on int64 keys.
+type Int64Keys struct {
+	nodes map[int64][]*bitvector.BitVector
+	codes map[int64]string
 }
 
-// NewIntKeys makes a Wavlet Tree from arraylike s whose elements can yield integer keys.
-func NewIntKeys(s Interface) *IntKeys {
-	w := &IntKeys{
-		nodes: make(map[int][]*bitvector.BitVector),
-		codes: make(map[int]string),
+// NewInt64Keys makes a Wavlet Tree from arraylike s whose elements can yield integer keys.
+func NewInt64Keys(s Interface) *Int64Keys {
+	w := &Int64Keys{
+		nodes: make(map[int64][]*bitvector.BitVector),
+		codes: make(map[int64]string),
 	}
 
 	// Generate huffman tree based on character occurrences in s.
@@ -101,7 +101,7 @@ func NewIntKeys(s Interface) *IntKeys {
 }
 
 // Rank returns the count of elements with the key in s[0:i].
-func (w *IntKeys) Rank(key int, i int) int {
+func (w *Int64Keys) Rank(key int64, i int) int {
 	code := w.codes[key]
 	if code == "" {
 		return 0
@@ -121,7 +121,7 @@ func (w *IntKeys) Rank(key int, i int) int {
 // Select returns i such that Rank(c, i) = r.
 // i.e. it returns the index of r-th occurrence of the element with the key.
 // Note that r is 0-origined, so wt.Select('a', 2) returns the index of the third 'a'.
-func (w *IntKeys) Select(key int, r int) int {
+func (w *Int64Keys) Select(key int64, r int) int {
 	code := w.codes[key]
 	if code == "" {
 		panic(fmt.Sprintf("wltree: no such element with key %v in s.", key))
@@ -146,7 +146,7 @@ type Bytes struct {
 
 // NewBytes constructs a Wavelet Tree from bytestring.
 func NewBytes(s []byte) *Bytes {
-	intKeys := NewIntKeys(byteSlice(s))
+	intKeys := NewInt64Keys(byteSlice(s))
 	b := &Bytes{}
 	for i, nodes := range intKeys.nodes {
 		b.nodes[i] = nodes
@@ -195,8 +195,8 @@ func (w *Bytes) Select(c byte, r int) int {
 	return r
 }
 
-func freq(s Interface) (keyset []int, counts []int) {
-	freqs := make(map[int]int)
+func freq(s Interface) (keyset []int64, counts []int) {
+	freqs := make(map[int64]int)
 	for i, size := 0, s.Len(); i < size; i++ {
 		freqs[s.Key(i)]++
 	}
@@ -212,6 +212,6 @@ type byteSlice []byte
 func (b byteSlice) Len() int {
 	return len(b)
 }
-func (b byteSlice) Key(i int) int {
-	return int(b[i])
+func (b byteSlice) Key(i int) int64 {
+	return int64(b[i])
 }
