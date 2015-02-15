@@ -105,8 +105,9 @@ func (w *Wltree) Rank(c byte, i int) int {
 	return i
 }
 
-// Select returns i such that Rank(c, i) = r, i.e. it returns the index of r-th occurrence of the
-// character c.
+// Select returns i such that Rank(c, i) = r.
+// i.e. it returns the index of r-th occurrence of the character c.
+// Note that r is 0-origined, so wt.Select('a', 2) returns the index of the third 'a'.
 func (w *Wltree) Select(c byte, r int) int {
 	code := w.codes[c]
 	if code == "" {
