@@ -4,7 +4,7 @@ See http://en.wikipedia.org/wiki/Wavelet_Tree for details.
 
 Example
 
-    const s = "abracadabra"
+    s := []byte("abracadabra")
     wt := wltree.New(s)
     // The number of 'a' in s.
     wt.Rank('a', len(s)) //=> 5
