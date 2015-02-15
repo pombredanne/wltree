@@ -5,7 +5,7 @@ Wavelet Tree is a index on bytestring `s`, and can return the number of specific
 
 ## Example
 ```go
-const s = "abracadabra"
+s := []byte("abracadabra")
 wt := wltree.New(s)
 wt.Rank('a', len(s)) //=> 5 (The number of 'a' in s.)
 wt.Rank('a', 8) - wt.Rank('a', 3) //=> 3 (The number of 'a' in s[3:8] = "acada") 
